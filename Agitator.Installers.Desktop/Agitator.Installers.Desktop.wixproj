@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>cda06132-e446-4261-b242-f3fd2d16208e</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>Agitator</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug;HarvestPath=..\Agitator.Apps.Desktop\bin\Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">HarvestPath=..\Agitator.Apps.Desktop\bin\x64\Debug</DefineConstants>
+    <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">HarvestPath=..\Agitator.Apps.Desktop\bin\x64\Release</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AgitatorDesktopHeat.wxs" />
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="ExcludeExeTransform.xsl" />
+    <Content Include="ExcludePdbTransform.xsl" />
+    <Content Include="ExcludeXmlTransform.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Agitator.Apps.Desktop\Agitator.Apps.Desktop.csproj">
+      <Name>Agitator.Apps.Desktop</Name>
+      <Project>{b5db54ac-f1f8-4403-89e9-3faba9c0d584}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixBalExtension">
+      <HintPath>$(WixExtDir)\WixBalExtension.dll</HintPath>
+      <Name>WixBalExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+  <Target Name="BeforeBuild">
+    <HeatDirectory Directory="..\Agitator.Apps.Desktop\bin\x64\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="AgitatorDesktopHeat.wxs" ComponentGroupName="AgitatorDesktop" DirectoryRefId="INSTALLFOLDER" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="ExcludeExeTransform.xsl;ExcludePdbTransform.xsl;ExcludeXmlTransform.xsl" />
+  </Target>
+</Project>

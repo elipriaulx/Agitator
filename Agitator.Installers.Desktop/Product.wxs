@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+	  Id="*"
+    Language="1033"
+    Name="Agitator"
+    Version="!(bind.FileVersion.Agitator.exe)"
+    Manufacturer="gpriaulx.co"
+    UpgradeCode="1e463aca-2621-4b39-9bc6-9bb9b5a97d86">
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+    <MajorUpgrade AllowDowngrades="no" AllowSameVersionUpgrades="no" IgnoreRemoveFailure="no" Schedule="afterInstallInitialize" DowngradeErrorMessage="A newer version of Agitator is already installed." />
+    <Media Id='1' Cabinet='AgitatorDesktop.cab' EmbedCab='yes' />
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR">INSTALLFOLDER</Property>
+    <WixVariable Id="WixUILicenseRtf" Value="..\Assets\InstallerLicence.rtf" />
+    <Feature Id="ProductFeature" Title="Agitator.Installers.Desktop" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="AgitatorDesktop" />
+    </Feature>
+    <Icon Id="AgitatorIcon.ico" SourceFile="..\Assets\Icon\AgitatorIcon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="AgitatorIcon.ico" />
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Agitator" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Agitator"/>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="Agitator.exe" Guid="{c015157f-8e12-46aa-9b9d-9e439d978634}">
+        <File Id="Agitator.exe" Source="$(var.HarvestPath)\Agitator.exe" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component Id="Agitator.exe.config" Guid="{22c63bf7-de2a-4ce5-9842-83d9b8a33fb1}">
+        <File Id="Agitator.exe.config" Source="$(var.HarvestPath)\Agitator.exe.config" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="f70c12e0-6cc2-49e5-b837-d0ededa16dd8">
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="Agitator" Description="Clipboard Content Generator" Target="[!Agitator.exe]" WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Agitator" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <ComponentRef Id="Agitator.exe" />
+      <ComponentRef Id="Agitator.exe.config" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </ComponentGroup>
+  </Fragment>
+
+</Wix>
